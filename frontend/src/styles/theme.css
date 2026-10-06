@@ -1,5 +1,5 @@
 /*
- * Design tokens (CLAUDE.md section 6.1).
+ * Design tokens (based on CLAUDE.md section 6.1, accent changed from teal to gold & black).
  * Every colour, size and radius used by the app is defined here once.
  * Tailwind 4 turns each token into utilities, e.g. --color-app-bar -> bg-app-bar.
  */
@@ -19,13 +19,22 @@
   --color-line: #e4e6ee;
   --color-input-line: #d9dce6;
 
-  /* Accent (teal) */
-  --color-app-bar: #0f766e;
-  --color-app-hover: #115e59;
-  --color-app-active: #134e4a;
-  --color-app-primary: #0f766e;
-  --color-app-light: #f0fdfa;
-  --color-app-light-border: #99f6e4;
+  /*
+   * Accent: gold & black.
+   * Yellow is too light for white text or for text on white, so it comes with partners:
+   *   on-primary -> text/icons ON a yellow fill (black, 14:1)
+   *   ink        -> accent-coloured text ON white (dark gold, 6:1, passes AA)
+   *   dark       -> black surfaces and the keyboard focus ring
+   */
+  --color-app-bar: #ffc72c;
+  --color-app-primary: #ffc72c;
+  --color-app-hover: #f5b800;
+  --color-app-active: #e0a800;
+  --color-app-on-primary: #1a1a1a;
+  --color-app-ink: #7a5b00;
+  --color-app-dark: #1a1a1a;
+  --color-app-light: #fff8e1;
+  --color-app-light-border: #ffe082;
 
   /* Favourite star */
   --color-star: #f59e0b;

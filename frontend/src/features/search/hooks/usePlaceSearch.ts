@@ -64,6 +64,15 @@ export function usePlaceSearch() {
   const clear = useCallback(() => dispatch(searchCleared()), [dispatch])
   const retry = useCallback(() => dispatch(queryChanged(query)), [dispatch, query])
 
+  /** One-click demo: type the text and submit it, exactly like a user pressing Enter. */
+  const tryExample = useCallback(
+    (text: string) => {
+      dispatch(queryChanged(text))
+      dispatch(searchSubmitted(text))
+    },
+    [dispatch],
+  )
+
   const onKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
       if (!isOpen && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
@@ -106,6 +115,7 @@ export function usePlaceSearch() {
     close,
     clear,
     retry,
+    tryExample,
     setActiveIndex,
   }
 }

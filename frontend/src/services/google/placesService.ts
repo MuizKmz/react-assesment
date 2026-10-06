@@ -75,10 +75,17 @@ export async function fetchSuggestions(
   }
 }
 
+/** Details already fetched this session, so looking at the same place again is free. */
+const detailsCache = new Map<string, PlaceDetails>()
+
 export async function getPlaceDetails(placeId: string): Promise<PlaceDetails> {
-  const { Place } = await loadPlacesLibrary()
-  // Reuse the prediction so its session token is sent; otherwise (e.g. from history) start fresh.
   const prediction = predictions.get(placeId)
+  // Outside a typing session (e.g. a favourite), reuse what we already have.
+  const cached = detailsCache.get(placeId)
+  if (!prediction && cached) return cached
+
+  const { Place } = await loadPlacesLibrary()
+  // Reuse the prediction so its session token is sent; otherwise start fresh.
   const place = prediction ? prediction.toPlace() : new Place({ id: placeId })
 
   try {
@@ -93,5 +100,6 @@ export async function getPlaceDetails(placeId: string): Promise<PlaceDetails> {
 
   const details = toPlaceDetails(place)
   if (!details) throw new ServiceError(copy.placeDetailsFailed)
+  detailsCache.set(placeId, details)
   return details
 }

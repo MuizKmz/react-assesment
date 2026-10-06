@@ -12,7 +12,7 @@ const icons: Record<ToastKind, typeof Info> = {
 }
 
 const tones: Record<ToastKind, string> = {
-  info: 'text-app-primary',
+  info: 'text-app-ink',
   success: 'text-found-text',
   error: 'text-error-text',
 }
@@ -22,10 +22,11 @@ export function Toaster() {
   const dispatch = useAppDispatch()
   const toasts = useAppSelector(selectToasts)
 
+  // Centred over the visible map on desktop, clear of the panel and the zoom controls.
   return (
     <div
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-4 bottom-4 z-50 flex flex-col items-center gap-2 lg:inset-x-auto lg:right-6 lg:bottom-6 lg:items-end"
+      className="pointer-events-none fixed inset-x-4 bottom-4 z-50 flex flex-col items-center gap-2 lg:right-24 lg:bottom-8 lg:left-[calc(var(--spacing-sidebar)+2rem)]"
     >
       {toasts.map((toast) => {
         const Icon = icons[toast.kind]
@@ -33,7 +34,7 @@ export function Toaster() {
           <div
             key={toast.id}
             role={toast.kind === 'error' ? 'alert' : 'status'}
-            className="pointer-events-auto flex w-full max-w-sm items-center gap-2 rounded-card border border-line bg-white py-2 pr-2 pl-3 shadow-lg"
+            className="pf-enter-up pointer-events-auto flex w-full max-w-sm items-center gap-2.5 rounded-xl border border-line bg-white py-2 pr-2 pl-3 shadow-xl shadow-ink/15"
           >
             <Icon aria-hidden className={clsx('size-4 shrink-0', tones[toast.kind])} />
             <p className="flex-1">{toast.message}</p>

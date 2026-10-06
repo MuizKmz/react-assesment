@@ -9,7 +9,7 @@ export function GoogleKeyBanner() {
   const rejected = useAppSelector(selectGoogleKeyRejected)
   if (env.googleMapsApiKey && !rejected) return null
   return (
-    <Banner kind={rejected ? 'error' : 'warning'} className="mx-4 mt-3 lg:mx-6">
+    <Banner kind={rejected ? 'error' : 'warning'} className="mb-3">
       {rejected ? copy.keyRejected : copy.missingKey}
     </Banner>
   )

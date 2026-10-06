@@ -12,7 +12,7 @@ export function Spinner({ label = 'Loading', className }: SpinnerProps) {
       role={label ? 'status' : undefined}
       aria-hidden={label ? undefined : true}
       className={clsx(
-        'inline-block size-4 animate-spin rounded-full border-2 border-app-light-border border-t-app-primary',
+        'inline-block size-4 animate-spin rounded-full border-2 border-app-light-border border-t-app-ink',
         className,
       )}
     >

@@ -7,6 +7,10 @@ export const selectHistoryEntries = (state: RootState) => state.history.entries
 export const selectHistoryCount = (state: RootState) => state.history.entries.length
 export const selectSelectedHistoryId = (state: RootState) => state.history.selectedId
 
+/** Full details from a past search for this place, if we have them (newest first). */
+export const selectKnownPlace = (state: RootState, placeId: string) =>
+  state.history.entries.find((entry) => entry.place?.placeId === placeId)?.place ?? null
+
 export interface HistoryItem extends SearchEntry {
   /** Place name when found, otherwise the text the user typed */
   title: string

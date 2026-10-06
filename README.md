@@ -8,7 +8,17 @@ Type a place, pick a Google Places suggestion, and see it on the map. **Every se
 | Google | Maps JavaScript API + **Places API (New)**: `AutocompleteSuggestion`, `AutocompleteSessionToken`, `Place.fetchFields` |
 | Backend | Java 21, Spring Boot 4.1, Spring Data JPA, Bean Validation, Flyway, springdoc (Swagger UI) |
 | Database | Microsoft SQL Server 2022 (Docker) |
-| Tests | Vitest + React Testing Library (61 tests); JUnit 5 + Mockito + MockMvc + Testcontainers (16 tests) |
+| Tests | Vitest + React Testing Library (82 tests); JUnit 5 + Mockito + MockMvc + Testcontainers (16 tests) |
+
+### Highlights
+
+- **Fly-to camera**: a nearby place gets one calm glide. A far one gets three overlapping phases: zoom out, glide across while zoomed out, zoom in. The map only travels at low zoom, where tiles are large and already loaded, so no blank tiles flash past (pure Web Mercator maths in [camera.ts](frontend/src/features/place/utils/camera.ts), vector rendering with in-between zoom levels). The place lands in the middle of the *visible* map, not under the floating panels. It jumps instead when the OS asks for reduced motion.
+- **Rich place card**: category, "Saved …" and distance chips, Directions, Copy coordinates and Open in Google Maps. When Google has a photo, it shows as a banner with the author credit Google requires; without one the card stays compact.
+- **Favourites show full details**: the backend stores only name, address and point. A [place saga](frontend/src/features/place/saga.ts) shows that at once, then fills in category, viewport and link from a past search in history (free) or from Google (once per session, cached). Late answers for a place you already left are ignored.
+- **Smart suggestions**: a category icon (mall, food, park, airport…), the distance, the matched text in bold, and "powered by Google".
+- **Locate me**: a self-contained `location` feature (slice + saga + service). It shows a blue dot, biases suggestions around you, and adds "x km from you" to the card and favourites.
+- **One-click demo**: "Try" chips (Petronas Twin Towers, Batu Caves…) run the real flow; <kbd>/</kbd> or <kbd>Ctrl</kbd>+<kbd>K</kbd> focuses search from anywhere.
+- **Motion with purpose**: the pin drops in with a ripple, favourite stars grow on hover, rows fade in one after another and loading shows a shimmer. All CSS, no animation library, and switched off for users who turn on reduced motion in their system settings.
 
 > **Screenshots:** add `docs/screenshot-desktop.png` and `docs/screenshot-mobile.png` after running the app with a Google key.
 
@@ -73,7 +83,7 @@ npm run dev
 
 > **Why not the widget from the linked Google example?** Since 1 March 2025 the legacy `google.maps.places.Autocomplete` / `AutocompleteService` are not available to new Google Cloud customers. This app uses the **Places API (New)** classes through the Maps JavaScript API, and builds its own combobox so results go through Redux.
 
-**Session tokens (billing):** one `AutocompleteSessionToken` is created per typing session and sent with every suggestion request. The session ends when `fetchFields` is called on the chosen `Place` (from `placePrediction.toPlace()`), and the next keystroke starts a new token. Google then bills the suggestions and the details as one session. Only the 7 fields the UI shows are requested.
+**Session tokens (billing):** one `AutocompleteSessionToken` is created per typing session and sent with every suggestion request. The session ends when `fetchFields` is called on the chosen `Place` (from `placePrediction.toPlace()`), and the next keystroke starts a new token. Google then bills the suggestions and the details as one session. Only the 8 fields the UI shows are requested (`photos` is the most expensive; remove it from `PLACE_FIELDS` in [placesService.ts](frontend/src/services/google/placesService.ts) and the card falls back to a gradient). Suggestions send an `origin`, so each one includes `distanceMeters` at no extra cost.
 
 ---
 
@@ -109,6 +119,7 @@ flowchart LR
   place:      { selected: PlaceDetails | null, status, error }
   history:    { entries: SearchEntry[] /* newest first, max 100 */, selectedId }
   favourites: EntityState<Favourite, placeId> & { status, error, pendingIds }
+  location:   { position: LatLng | null, status, error }
   ui:         { toasts, googleKeyRejected }
 }
 ```
@@ -130,7 +141,7 @@ History is persisted by a small saga (`takeEvery([entryAdded, entryRemoved, hist
 
 ### Why Tailwind
 
-Utility classes keep each component's styling next to its markup, and Tailwind 4's `@theme` turns the design tokens (teal accent, 13 px text, 12 px card radius, status chip colours) into utilities like `bg-app-primary` or `text-label`. One token file ([theme.css](frontend/src/styles/theme.css)) changes the look everywhere. Statuses get colour from one component ([StatusChip.tsx](frontend/src/shared/components/StatusChip.tsx)), never by hand.
+Utility classes keep each component's styling next to its markup, and Tailwind 4's `@theme` turns the design tokens (gold & black accent, 13 px text, 12 px card radius, status chip colours) into utilities like `bg-app-primary` or `text-label`. One token file ([theme.css](frontend/src/styles/theme.css)) changes the look everywhere; the move from teal to gold was almost entirely a token change. Because yellow is light, it comes with partner tokens: `app-on-primary` (black text on yellow) and `app-ink` (dark gold text on white), so every pairing passes WCAG AA, and the keyboard focus ring is dark rather than yellow. Statuses get colour from one component ([StatusChip.tsx](frontend/src/shared/components/StatusChip.tsx)), never by hand.
 
 ---
 
@@ -144,6 +155,8 @@ Utility classes keep each component's styling next to its markup, and Tailwind 4
 | **Custom hook** `useFavourite(place)` | [useFavourite.ts](frontend/src/features/favourites/hooks/useFavourite.ts) | `{ isFavourite, isPending, toggle }` |
 | **Custom hook** `useMapFocus()` | [useMapFocus.ts](frontend/src/features/place/hooks/useMapFocus.ts) | `fitBounds(viewport)` or `panTo` + zoom 15 when the selected place changes |
 | **Custom hook** `useOnClickOutside()` | [useOnClickOutside.ts](frontend/src/shared/hooks/useOnClickOutside.ts) | Closes the dropdown |
+| **Custom hook** `useMediaQuery()` | [useMediaQuery.ts](frontend/src/shared/hooks/useMediaQuery.ts) | `useSyncExternalStore` over `matchMedia`; drives layout insets and reduced motion |
+| **Custom hook** `useSearchShortcut()` | [useSearchShortcut.ts](frontend/src/features/search/hooks/useSearchShortcut.ts) | <kbd>/</kbd> and <kbd>Ctrl</kbd>+<kbd>K</kbd> focus search, but never while typing in another field |
 | **Render props** `<SuggestionList renderItem>` | [SuggestionList.tsx](frontend/src/features/search/components/SuggestionList.tsx) | The list owns ARIA roles, ids and mouse wiring; the caller decides how a row looks |
 | **Render props** `<AsyncView>{(data) => …}</AsyncView>` | [AsyncView.tsx](frontend/src/shared/components/AsyncView.tsx) | Same loading / empty / error+retry handling for the History and Favourites tabs |
 
@@ -178,7 +191,9 @@ cd frontend; npm test; npm run lint; npm run build
 cd backend;  .\mvnw.cmd verify
 ```
 
-**Frontend (Vitest, 61 tests)**
+**Frontend (Vitest, 82 tests)**
+- Fly-to camera maths: lands exactly on target, zooms out only for far trips, takes the short way across 180°, and Mercator project/unproject round-trips.
+- Location saga: stores the position, explains a blocked permission, and biases suggestions once located.
 - Reducers: every slice, including the history cap of 100, newest first, `entrySelected`, and favourites optimistic add/remove/rollback.
 - Sagas (real store, mocked services): the debounce sends only the last query; **a slow older response never overwrites a newer one**; fewer than 2 characters makes no request; chosen loads details and adds a history entry; submitted with no suggestions adds a `no-results` entry; favourite toggle success, rollback and toast, and a second click ignored while pending; raw errors are never shown.
 - Components: `SearchBox` keyboard flow (type → ↓ → Enter → the card shows the name, focus stays in the input), Esc closes and then clears, Retry; `HistoryPanel` empty and filled states, re-select with no Google call, inline clear confirmation.
@@ -198,6 +213,7 @@ cd backend;  .\mvnw.cmd verify
 - **Favourites are global** (no auth): add Spring Security + `user_id`.
 - **Concurrent PUTs of the same new place** could hit the unique constraint; the API answers `409` and the UI already prevents double clicks with `pendingIds`.
 - **Location bias**: suggestions are biased to the selected place (or the default centre) within 50 km, and limited by `VITE_PLACES_REGION_CODES` (blank means worldwide).
+- **Desktop layout floats panels over a full-bleed map**; on small screens the same panel uses `display: contents`, so search, map, card and lists stack without duplicated markup. The card sits *below* the map on mobile so Google's logo and attribution are never covered.
 - Next: E2E tests (Playwright) with a stubbed Google SDK, a "nearby places" feature folder, CI running `npm test` and `mvn verify`.
 
 ---
@@ -211,7 +227,7 @@ cd backend;  .\mvnw.cmd verify
 │  ├─ app/                     store (saga, thunk off), rootSaga, providers, layout
 │  ├─ config/env.ts            validates VITE_* once
 │  ├─ services/                google/ (placesService, mappers, authFailure), api/ (httpClient, favouritesApi)
-│  ├─ features/                search · place · history · favourites · ui  (slice, saga, selectors, components, hooks, __tests__)
+│  ├─ features/                search · place · history · favourites · location · ui  (slice, saga, selectors, components, hooks, __tests__)
 │  ├─ shared/                  components, hoc, hooks, utils, copy (all UI text)
 │  └─ styles/                  theme.css (tokens), index.css
 └─ backend/src/main/java/com/placefinder

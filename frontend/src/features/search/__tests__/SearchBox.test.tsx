@@ -105,4 +105,34 @@ describe('SearchBox', () => {
 
     expect(await screen.findByRole('option')).toBeTruthy()
   })
+
+  it('shows category and distance on each suggestion', async () => {
+    fetchSuggestions.mockResolvedValue([pavilionSuggestion])
+    const { user } = renderSearch()
+
+    await user.type(screen.getByRole('combobox'), 'pavi')
+    const option = await screen.findByRole('option')
+    expect(option.textContent).toContain('2.4 km')
+  })
+
+  it('a "Try" chip runs the whole search in one click', async () => {
+    fetchSuggestions.mockResolvedValue([pavilionSuggestion])
+    getPlaceDetails.mockResolvedValue(pavilionPlace)
+    const { user, store } = renderSearch()
+
+    await user.click(screen.getByRole('button', { name: 'Batu Caves' }))
+
+    expect(await screen.findByRole('heading', { name: 'Pavilion Kuala Lumpur' })).toBeTruthy()
+    expect(store.getState().history.entries[0]).toMatchObject({ query: 'Batu Caves' })
+  })
+
+  it('"/" focuses the search box from anywhere', async () => {
+    const { user } = renderSearch()
+    const input = screen.getByRole('combobox')
+    expect(document.activeElement).not.toBe(input)
+
+    await user.keyboard('/')
+    expect(document.activeElement).toBe(input)
+    expect((input as HTMLInputElement).value).toBe('')
+  })
 })

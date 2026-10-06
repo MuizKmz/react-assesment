@@ -51,7 +51,11 @@ export function Tabs<Id extends string>({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div role="tablist" aria-label={label} className="flex gap-1 border-b border-line px-4">
+      <div
+        role="tablist"
+        aria-label={label}
+        className="mx-4 mb-1 flex gap-1 rounded-xl bg-page p-1 ring-1 ring-line/60"
+      >
         {tabs.map((tab, index) => {
           const selected = tab.id === value
           return (
@@ -69,10 +73,10 @@ export function Tabs<Id extends string>({
               onClick={() => onChange(tab.id)}
               onKeyDown={(event) => handleKeyDown(event, index)}
               className={clsx(
-                '-mb-px flex h-10 items-center gap-1.5 border-b-2 px-2 font-semibold transition-colors',
+                'flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 font-semibold transition-all',
                 selected
-                  ? 'border-app-primary text-app-primary'
-                  : 'border-transparent text-muted hover:text-ink',
+                  ? 'bg-white text-app-ink shadow-sm ring-1 ring-line'
+                  : 'text-muted hover:text-ink',
               )}
             >
               {tab.label}
@@ -80,7 +84,7 @@ export function Tabs<Id extends string>({
                 <span
                   className={clsx(
                     'rounded-full px-1.5 text-section font-semibold',
-                    selected ? 'bg-app-light text-app-active' : 'bg-page text-muted',
+                    selected ? 'bg-app-light text-app-ink' : 'bg-line/70 text-muted',
                   )}
                 >
                   {tab.count}

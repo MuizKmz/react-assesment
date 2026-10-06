@@ -5,6 +5,8 @@ export const pavilionSuggestion: PlaceSuggestion = {
   primaryText: 'Pavilion Kuala Lumpur',
   secondaryText: 'Jalan Bukit Bintang, Kuala Lumpur',
   primaryMatches: [{ start: 0, end: 4 }],
+  types: ['shopping_mall', 'point_of_interest'],
+  distanceMeters: 2400,
 }
 
 export const klccSuggestion: PlaceSuggestion = {
@@ -12,6 +14,8 @@ export const klccSuggestion: PlaceSuggestion = {
   primaryText: 'Petronas Twin Towers',
   secondaryText: 'Kuala Lumpur City Centre',
   primaryMatches: [{ start: 0, end: 3 }],
+  types: ['tourist_attraction'],
+  distanceMeters: null,
 }
 
 export const pavilionPlace: PlaceDetails = {
@@ -22,6 +26,7 @@ export const pavilionPlace: PlaceDetails = {
   viewport: { north: 3.151, south: 3.147, east: 101.715, west: 101.711 },
   googleMapsUri: 'https://maps.google.com/?cid=1',
   types: ['shopping_mall'],
+  photo: null,
 }
 
 export const pavilionFavourite: Favourite = {

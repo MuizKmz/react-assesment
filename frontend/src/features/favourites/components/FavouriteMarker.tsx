@@ -4,7 +4,7 @@ import { useAppDispatch } from '@/app/hooks'
 import type { Favourite } from '@/types/place'
 import { favouriteFocused } from '../slice'
 
-/** Small amber star on the map for each favourite. Click shows it in the card. */
+/** Small amber star on the map for each favourite. Grows on hover; click shows it in the card. */
 export function FavouriteMarker({ favourite }: { favourite: Favourite }) {
   const dispatch = useAppDispatch()
   return (
@@ -13,8 +13,8 @@ export function FavouriteMarker({ favourite }: { favourite: Favourite }) {
       title={favourite.name}
       onClick={() => dispatch(favouriteFocused(favourite))}
     >
-      <span className="flex size-6 items-center justify-center rounded-full border border-white bg-star shadow-md">
-        <Star aria-hidden className="size-3.5 fill-white text-white" />
+      <span className="pf-fav flex size-7 items-center justify-center rounded-full border-2 border-app-primary bg-app-dark shadow-lg shadow-black/30">
+        <Star aria-hidden className="size-3.5 fill-app-primary text-app-primary" />
       </span>
     </AdvancedMarker>
   )

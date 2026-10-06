@@ -5,7 +5,7 @@ import { AlertTriangle, Info, XCircle } from 'lucide-react'
 export type BannerKind = 'info' | 'warning' | 'error'
 
 const styles: Record<BannerKind, { box: string; Icon: typeof Info }> = {
-  info: { box: 'border-app-light-border bg-app-light text-app-active', Icon: Info },
+  info: { box: 'border-app-light-border bg-app-light text-app-ink', Icon: Info },
   warning: { box: 'border-warning-border bg-warning-bg text-warning-text', Icon: AlertTriangle },
   error: { box: 'border-danger-border bg-danger-bg text-danger-text', Icon: XCircle },
 }

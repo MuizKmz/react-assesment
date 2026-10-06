@@ -10,9 +10,9 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-app-primary text-white hover:bg-app-hover active:bg-app-active',
+  primary: 'bg-app-primary text-app-on-primary hover:bg-app-hover active:bg-app-active',
   secondary: 'border border-input-line bg-white text-ink hover:bg-page',
-  ghost: 'text-app-primary hover:bg-app-light',
+  ghost: 'text-app-ink hover:bg-app-light',
   danger: 'bg-error-text text-white hover:bg-danger-text',
 }
 

@@ -32,6 +32,13 @@ const placeSlice = createSlice({
     selectionCleared() {
       return initialState
     },
+    /**
+     * Fuller details for the place already on screen (e.g. a favourite, which the backend
+     * stores without category or viewport). Ignored if the user has moved on to another place.
+     */
+    selectionRefreshed(state, action: PayloadAction<PlaceDetails>) {
+      if (state.selected?.placeId === action.payload.placeId) state.selected = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -50,6 +57,7 @@ const placeSlice = createSlice({
           viewport: null,
           googleMapsUri: null,
           types: [],
+          photo: null,
         }
         state.status = 'succeeded'
         state.error = null
@@ -57,7 +65,12 @@ const placeSlice = createSlice({
   },
 })
 
-export const { selectionStarted, selectionSucceeded, selectionFailed, selectionCleared } =
-  placeSlice.actions
+export const {
+  selectionStarted,
+  selectionSucceeded,
+  selectionFailed,
+  selectionCleared,
+  selectionRefreshed,
+} = placeSlice.actions
 
 export default placeSlice.reducer

@@ -16,8 +16,10 @@ type PanelTab = 'history' | 'favourites'
 
 /**
  * Layout shell.
- * Desktop (lg+): 380px left panel (search on top, lists below) + map filling the rest.
- * Smaller screens: search, then map at 55vh, then the lists.
+ * Desktop (lg+): the map fills the screen; a frosted panel floats on the left
+ *   (brand, search, history/favourites) and the place card floats on the right.
+ * Smaller screens: the panel uses `display: contents`, so its parts stack around
+ *   the map in this order: header, search, map (+ card), lists.
  */
 export function App() {
   const historyCount = useAppSelector(selectHistoryCount)
@@ -25,27 +27,42 @@ export function App() {
   const [tab, setTab] = useState<PanelTab>('history')
 
   return (
-    <div className="flex min-h-dvh flex-col lg:h-dvh lg:overflow-hidden">
-      <header className="flex h-topbar shrink-0 items-center gap-3 bg-app-bar px-4 text-white lg:px-6">
-        <MapPinned aria-hidden className="size-5" />
-        <h1 className="flex-1 text-title font-bold">Place Finder</h1>
-        <button
-          type="button"
-          onClick={() => setTab('favourites')}
-          className="flex items-center gap-1.5 rounded-control px-2 py-1 font-medium hover:bg-app-hover focus-visible:outline-white"
-        >
-          <Star aria-hidden className="size-4 fill-star text-star" />
-          {favouriteCount} {favouriteCount === 1 ? 'favourite' : 'favourites'}
-        </button>
-      </header>
+    <div className="relative flex min-h-dvh flex-col bg-page lg:block lg:h-dvh lg:overflow-hidden">
+      <section aria-label="Map" className="relative order-3 flex flex-col lg:absolute lg:inset-0">
+        <div className="relative h-[55vh] lg:h-full">
+          <GooglePlaceMap />
+        </div>
+        <PlaceCard />
+      </section>
 
-      <GoogleKeyBanner />
+      <aside
+        aria-label="Search panel"
+        className="contents lg:absolute lg:top-4 lg:bottom-10 lg:left-4 lg:z-20 lg:flex lg:w-sidebar lg:flex-col lg:overflow-hidden lg:rounded-2xl lg:border lg:border-white/70 lg:shadow-2xl lg:shadow-ink/20 lg:glass"
+      >
+        <header className="brand-gradient order-1 flex shrink-0 items-center gap-3 px-4 py-3 text-app-on-primary lg:px-5 lg:py-4">
+          <span className="flex size-10 items-center justify-center rounded-xl bg-white/45 ring-1 ring-black/10 backdrop-blur-sm">
+            <MapPinned aria-hidden className="size-5" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-title leading-tight font-bold">Place Finder</h1>
+            <p className="text-label text-app-on-primary/70">Search · remember · favourite</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setTab('favourites')}
+            aria-label={`${favouriteCount} favourites. Show favourites`}
+            className="flex items-center gap-1.5 rounded-full bg-app-dark px-3 py-1.5 font-semibold text-app-primary shadow-sm transition hover:bg-black"
+          >
+            <Star aria-hidden className="size-4 fill-app-primary text-app-primary" />
+            {favouriteCount}
+          </button>
+        </header>
 
-      <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[var(--spacing-sidebar)_1fr] lg:grid-rows-[auto_minmax(0,1fr)]">
         <section
           aria-labelledby="find-heading"
-          className="z-20 border-line bg-white px-4 pt-4 pb-3 lg:col-start-1 lg:row-start-1 lg:border-r"
+          className="relative z-30 order-2 bg-white px-4 pt-4 pb-4 lg:bg-transparent lg:px-5"
         >
+          <GoogleKeyBanner />
           <h2
             id="find-heading"
             className="mb-2 text-section font-semibold tracking-[0.04em] text-muted uppercase"
@@ -56,16 +73,8 @@ export function App() {
         </section>
 
         <section
-          aria-label="Map"
-          className="relative h-[55vh] overflow-hidden lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-auto"
-        >
-          <GooglePlaceMap />
-          <PlaceCard />
-        </section>
-
-        <section
           aria-label="Searches and favourites"
-          className="flex min-h-[320px] flex-col border-line bg-white lg:col-start-1 lg:row-start-2 lg:min-h-0 lg:border-r"
+          className="order-4 flex min-h-90 flex-col border-t border-line bg-white pt-3 lg:min-h-0 lg:flex-1 lg:bg-transparent"
         >
           <Tabs
             idPrefix="panel"
@@ -80,7 +89,7 @@ export function App() {
             {tab === 'history' ? <HistoryPanel /> : <FavouritesPanel />}
           </Tabs>
         </section>
-      </main>
+      </aside>
 
       <Toaster />
     </div>

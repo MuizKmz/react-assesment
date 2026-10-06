@@ -95,6 +95,8 @@ describe('Google mappers', () => {
       text: { text: 'Pavilion Kuala Lumpur, Jalan Bukit Bintang', matches: [] },
       mainText: { text: 'Pavilion Kuala Lumpur', matches: [{ startOffset: 0, endOffset: 4 }] },
       secondaryText: { text: 'Jalan Bukit Bintang' },
+      types: ['shopping_mall'],
+      distanceMeters: 2400,
     } as unknown as google.maps.places.PlacePrediction
 
     expect(toPlaceSuggestion(prediction)).toEqual({
@@ -102,6 +104,8 @@ describe('Google mappers', () => {
       primaryText: 'Pavilion Kuala Lumpur',
       secondaryText: 'Jalan Bukit Bintang',
       primaryMatches: [{ start: 0, end: 4 }],
+      types: ['shopping_mall'],
+      distanceMeters: 2400,
     })
   })
 
@@ -114,6 +118,12 @@ describe('Google mappers', () => {
       viewport: { toJSON: () => ({ north: 1, south: 0, east: 1, west: 0 }) },
       googleMapsURI: 'https://maps.google.com/?cid=1',
       types: ['shopping_mall'],
+      photos: [
+        {
+          getURI: ({ maxWidth }: { maxWidth: number }) => `https://photo.test/p1?w=${maxWidth}`,
+          authorAttributions: [{ displayName: 'Aisyah', uri: 'https://maps.google.com/u/1' }],
+        },
+      ],
     } as unknown as google.maps.places.Place
 
     const details = toPlaceDetails(place)
@@ -125,6 +135,10 @@ describe('Google mappers', () => {
       viewport: { north: 1, south: 0, east: 1, west: 0 },
       googleMapsUri: 'https://maps.google.com/?cid=1',
       types: ['shopping_mall'],
+      photo: {
+        url: 'https://photo.test/p1?w=720',
+        attributions: [{ name: 'Aisyah', uri: 'https://maps.google.com/u/1' }],
+      },
     })
     // Survives JSON, so it is safe for Redux and localStorage.
     expect(JSON.parse(JSON.stringify(details))).toEqual(details)

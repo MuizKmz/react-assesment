@@ -44,7 +44,7 @@ export function SuggestionList<T>({
             onClick={() => onChoose(item)}
             onMouseMove={() => !active && onActiveIndexChange(index)}
             className={clsx(
-              'cursor-pointer px-3 py-2 transition-colors',
+              'cursor-pointer px-3 py-2.5 transition-colors',
               active ? 'bg-app-light' : 'hover:bg-page',
             )}
           >
