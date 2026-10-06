@@ -1,0 +1,30 @@
+# ---------- Secrets (never commit; commit the .example copies instead) ----------
+.env
+.env.local
+.env.*.local
+!.env.example
+application-local.yml
+!application-local.example.yml
+
+# ---------- Frontend ----------
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.vite/
+npm-debug.log*
+
+# ---------- Backend ----------
+backend/target/
+!backend/.mvn/wrapper/maven-wrapper.jar
+*.class
+*.log
+hs_err_pid*
+
+# ---------- IDE / OS ----------
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
