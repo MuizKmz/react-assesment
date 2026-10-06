@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+@import './theme.css';
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-page font-sans text-body text-ink;
+  }
+
+  /* One visible focus ring for every interactive element (keyboard users only). */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-app-primary;
+  }
+}

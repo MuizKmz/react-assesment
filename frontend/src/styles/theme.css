@@ -1,0 +1,58 @@
+/*
+ * Design tokens (CLAUDE.md section 6.1).
+ * Every colour, size and radius used by the app is defined here once.
+ * Tailwind 4 turns each token into utilities, e.g. --color-app-bar -> bg-app-bar.
+ */
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Type scale */
+  --text-section: 11px;
+  --text-label: 12px;
+  --text-body: 13px;
+  --text-title: 18px;
+
+  /* Neutrals */
+  --color-page: #f3f4f8;
+  --color-ink: #1e2233;
+  --color-muted: #5e6478;
+  --color-line: #e4e6ee;
+  --color-input-line: #d9dce6;
+
+  /* Accent (teal) */
+  --color-app-bar: #0f766e;
+  --color-app-hover: #115e59;
+  --color-app-active: #134e4a;
+  --color-app-primary: #0f766e;
+  --color-app-light: #f0fdfa;
+  --color-app-light-border: #99f6e4;
+
+  /* Favourite star */
+  --color-star: #f59e0b;
+
+  /* Status chips */
+  --color-found-bg: #dcfce7;
+  --color-found-text: #166534;
+  --color-none-bg: #eef0f4;
+  --color-none-text: #475069;
+  --color-error-bg: #fee2e2;
+  --color-error-text: #991b1b;
+
+  /* Banners */
+  --color-warning-bg: #fffbeb;
+  --color-warning-border: #fcd34d;
+  --color-warning-text: #78350f;
+  --color-danger-bg: #fef2f2;
+  --color-danger-border: #fecaca;
+  --color-danger-text: #7f1d1d;
+
+  /* Shape */
+  --radius-card: 12px;
+  --radius-control: 8px;
+
+  /* Control heights */
+  --spacing-input: 38px;
+  --spacing-button: 36px;
+  --spacing-topbar: 56px;
+  --spacing-sidebar: 380px;
+}
