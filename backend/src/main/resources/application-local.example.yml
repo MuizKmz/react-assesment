@@ -1,0 +1,7 @@
+# Copy to application-local.yml (git-ignored) and fill in your password.
+# It is loaded automatically when present. Environment variables still win.
+spring:
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=place_finder;encrypt=true;trustServerCertificate=true
+    username: sa
+    password: change-me
